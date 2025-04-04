@@ -1,0 +1,16 @@
+<%= render(ModalComponent.new(title: @event.title)) do %>
+  <% if @event.recurring.present? %>
+    <div class="mb-16">
+      <%= render "recurring_dropdowns", event: @event %>
+    </div>
+  <% else %>
+    <%= button_to "Edit", edit_event_path(@event), method: :get, class: "rounded-lg py-3 mt-2 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+    <%= button_to "Destroy", @event, method: :delete, data: { turbo_frame: '_top' }, class: "rounded-lg py-3 mt-2 px-5 bg-red-600 text-white inline-block font-medium cursor-pointer" %>
+  <% end %>
+
+  <ul>
+    <li>Start: <%= @event.starts_at %></li>
+    <li>End: <%= @event.ends_at %></li>
+    <li>Color: <%= @event.color %></li>
+  </ul>
+<% end %>

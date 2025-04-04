@@ -1,0 +1,24 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  username: "postgres"
+  password: "password"
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: fullcalendar_development
+test:
+  <<: *default
+  database: fullcalendar_test
+
+production:
+  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  database: <%= ENV['POSTGRES_DB'] %>
+  pool: 5
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  host: db
+  port: 5432
