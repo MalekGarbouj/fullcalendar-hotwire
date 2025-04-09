@@ -32,6 +32,17 @@ export default class extends Controller {
           { body: { event: { start: info.event.startStr, end: info.event.endStr } }}
         );
       },
+      eventResize: function(info) {
+        put(`/events/${info.event.id}`, {
+          body: JSON.stringify({
+            event: {
+              start: info.event.startStr,
+              end: info.event.endStr
+            }
+          }),
+          contentType: "application/json"
+        });
+      },
       select: function(info) {
         overlay.src = `/events/new?event[start]=${info.startStr}&event[end]=${info.endStr}`;
       },
