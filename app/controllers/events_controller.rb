@@ -1,10 +1,32 @@
 class EventsController < ApplicationController
-  before_action :set_event, only: %i[ show edit update destroy ]
-  before_action :empty_recurring_for_once, only: %i[ create update ]
+  before_action :set_event, only: %i[show edit update destroy]
+  before_action :empty_recurring_for_once, only: %i[create update]
   before_action :set_event_until, only: :create
 
   def index
+    @agents = Agent.all
     @events = Event.in_period(starts_at, ends_at)
+  end
+
+  def assign
+    task = Event.find(params[:task_id])
+    agent = Agent.find(params[:agent_id])
+
+    if task.update(agent: agent)
+      render json: {success: true, task: task}, status: :ok
+    else
+      render json: {success: false, errors: task.errors.full_messages}, status: :unprocessable_entity
+    end
+  end
+
+  def unassign
+    task = Event.find(params[:id])
+
+    if task.update(agent: nil)
+      render json: {success: true, task: task}, status: :ok
+    else
+      render json: {success: false, errors: task.errors.full_messages}, status: :unprocessable_entity
+    end
   end
 
   def new
@@ -67,9 +89,8 @@ class EventsController < ApplicationController
   end
 
   def turbo_notice(notice)
-    render turbo_stream: turbo_stream.update('popup',
-      ApplicationController.render(NoticeComponent.new(notice: notice))
-    )
+    render turbo_stream: turbo_stream.update("popup",
+      ApplicationController.render(NoticeComponent.new(notice: notice)))
   end
 
   def set_event
@@ -79,7 +100,6 @@ class EventsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def event_params
     params.require(:event).permit(:title, :start, :end, :color, :all_day, :parent_id, :recurring, :event_until_id,
-      *Event::RECURRING_FIELDS
-    )
+      *Event::RECURRING_FIELDS)
   end
 end

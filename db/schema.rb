@@ -10,9 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2022_05_11_182548) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_16_171904) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "agents", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "events", force: :cascade do |t|
     t.string "title", null: false
@@ -24,5 +31,9 @@ ActiveRecord::Schema[8.0].define(version: 2022_05_11_182548) do
     t.integer "parent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "agent_id"
+    t.index ["agent_id"], name: "index_events_on_agent_id"
   end
+
+  add_foreign_key "events", "agents"
 end

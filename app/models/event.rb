@@ -3,6 +3,7 @@ class Event < ApplicationRecord
   validates_comparison_of :end, greater_than: :start
 
   has_many :exceptions, class_name: "Event", foreign_key: "parent_id", dependent: :destroy
+  belongs_to :agent, optional: true
 
   RECURRING_FIELDS = %i[every interval until on except].freeze
 
@@ -22,8 +23,8 @@ class Event < ApplicationRecord
   # Either the start is in the period, the end is in it, or start is before ane end is after
   scope :single_in_period, ->(starts_at, ends_at) {
     single.starts_at_in_period(starts_at, ends_at)
-    .or(single.ends_at_in_period(starts_at, ends_at))
-    .or(single.overlapping_period(starts_at, ends_at))
+      .or(single.ends_at_in_period(starts_at, ends_at))
+      .or(single.overlapping_period(starts_at, ends_at))
   }
 
   # 'editable' is a fullcalendar method; can you drag the event around?
